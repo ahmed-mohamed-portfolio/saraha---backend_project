@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { DB_URL } from "../../config/config.service.js";
+import { DB_URL } from "../../config/index.js";
 
 
 

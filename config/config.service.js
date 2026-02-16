@@ -7,8 +7,6 @@ let DB_URL    = process.env.DATABASE_URL
 let PORT      = process.env.SERVER_PORT
 let PROJ_MOOD = process.env.MOOD
 
-
-
 export {
     DB_URL,
     PORT,
