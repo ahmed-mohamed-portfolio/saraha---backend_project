@@ -11,6 +11,7 @@ export const signup = async (data) => {
         return ConflictException({ message: "User Already Exists" })
     }
 
+    
 
     let addedUser = await userModel.insertOne({ userName, email, password })
     return addedUser
