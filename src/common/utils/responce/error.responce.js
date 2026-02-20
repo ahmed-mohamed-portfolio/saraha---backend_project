@@ -36,6 +36,16 @@ export const UnauthorizedException = ({ message = "UnauthorizedException", extra
     })
 }
 
+
+export const ForbiddenException = ({ message = "ForbiddenException", extra = undefined } = {}) => {
+    return ErrorResponse({
+        status: 403,
+        message,
+        extra
+    })
+}
+
+
 export const globalErrorHandler = (error, req, res, next) => {
     const status = error.status ? error.status : error.cause ? error.cause.status : 500;
     const mood = PROJ_MOOD == 'dev'
