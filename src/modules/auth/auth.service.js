@@ -1,6 +1,6 @@
 import { ProviderEnums } from '../../common/index.js'
 import { ConflictException, NotFoundException } from '../../common/utils/responce/index.js'
-import { findOne } from '../../database/database.service.js'
+import { findOne, insertOne } from '../../database/database.service.js'
 import { userModel } from '../../database/index.js'
 
 
@@ -14,7 +14,7 @@ export const signup = async (data) => {
 
     
 
-    let addedUser = await userModel.insertOne({ userName, email, password })
+    let addedUser = await insertOne({model:userModel,data:{ userName, email, password }})
     return addedUser
 }
 
