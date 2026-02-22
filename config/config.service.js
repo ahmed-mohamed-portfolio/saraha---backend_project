@@ -6,9 +6,12 @@ dotenv.config({path:path.resolve('./config/.env')})
 let DB_URL    = process.env.DATABASE_URL
 let PORT      = process.env.SERVER_PORT
 let PROJ_MOOD = process.env.MOOD
+let Salt      = process.env.SALT
+
 
 export {
     DB_URL,
     PORT,
-    PROJ_MOOD
+    PROJ_MOOD,
+    Salt
 }
