@@ -1,11 +1,16 @@
 export const GenderEnums = {
-    Male:"male",
-    Famale:"female"
+    Male:"0",
+    Famale:"1"
 }
 
 
-
 export const ProviderEnums = {
-    Google:"google",
-    System:"system"
+    Google:"1",
+    System:"0"
+}
+
+
+export const roleEnums = {
+    Admin : "0",
+    User  : "1"
 }

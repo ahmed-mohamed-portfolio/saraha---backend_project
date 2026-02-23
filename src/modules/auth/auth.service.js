@@ -1,10 +1,10 @@
 import { compareHash, generateHash } from '../../common/hash/hash.js'
 import { ProviderEnums } from '../../common/index.js'
 import { ConflictException, NotFoundException, UnauthorizedException } from '../../common/utils/responce/index.js'
-import { find, findById, findOne, insertOne } from '../../database/database.service.js'
+import { findById, findOne, insertOne } from '../../database/database.service.js'
 import { userModel } from '../../database/index.js'
 import jwt from 'jsonwebtoken'
-
+import { jwt_admin_signature, jwt_key, jwt_user_signature } from '../../../config/index.js'
 
 
 
@@ -23,8 +23,7 @@ export const signup = async (data) => {
 }
 
 
-
-export const login = async (data) => {
+export const login = async (data, issuer) => {
     let { email, password } = data
 
 
@@ -32,13 +31,31 @@ export const login = async (data) => {
 
     if (existUser) {
 
-        let isMatched = compareHash(password, existUser.password)
+        let audience = undefined
+        let signature = undefined
+        switch (existUser.role) {
+            case "0":
+                signature = jwt_admin_signature
+                audience = "Admin"                
+                break;
+
+            case "1":
+                signature = jwt_user_signature
+                audience = "User"
+                break;
+        }
+
+        let isMatched = await compareHash(password, existUser.password)
+        
         if (isMatched) {
 
-            let token = jwt.sign({ id: existUser._id }, "route", { expiresIn: '1d' })
-            console.log(existUser._id);
-
-            console.log(token);
+            let token = jwt.sign({ id: existUser._id }, signature, {
+                expiresIn: '1d',
+                notBefore: '2s',
+                issuer,
+                audience
+            })
+            
 
             return { existUser, token }
         }
@@ -49,18 +66,9 @@ export const login = async (data) => {
 }
 
 
+export const getUserById = async (userId) => {
 
-export const getUserById = async (headers) => {
-
-    let { authorization } = headers
-
-    if (!authorization) {
-        UnauthorizedException({ message: "un authorized" })
-    }
-    
-    let decoded = jwt.verify(authorization, "route")
-
-    let userData = await findById({ model: userModel, id: decoded.id })
+    let userData = await findById({ model: userModel, id: userId })
     if (userData) {
         return userData
     }
