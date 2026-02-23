@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { SuccessResponse } from "../../common/utils/responce/index.js";
-import {signup,login, getUserById} from './auth.service.js'
+import {signup,login, getUserById, generateAccessToken} from './auth.service.js'
 import { auth } from "../../common/middleWare/auth.js";
 
 const router = Router()
@@ -27,5 +27,15 @@ router.get('/get-user-by-id',auth,async (req,res)=>{
     let userData = await getUserById(req.userId)
     res.json(userData)
 })
+
+
+router.get('/generate-access-token', async (req,res)=>{
+
+    let {authorization} = req.headers
+    let accessToken =  await generateAccessToken(authorization)
+    return SuccessResponse({res,message :'access token created',status:200,data:accessToken})
+
+})
+
 
 export default router

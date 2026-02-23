@@ -10,6 +10,8 @@ let Salt      = process.env.SALT
 let jwt_key   = process.env.JWT_KEY 
 let jwt_admin_signature = process.env.JWT_ADMIN_SIGNATURE 
 let jwt_user_signature  = process.env.JWT_USER_SIGNATURE 
+let jwt_admin_refresh_signature = process.env.JWT_ADMIN_REFRESH_SIGNATURE
+let jwt_user_refresh_signature  = process.env.JWT_USER_REFRESH_SIGNATURE
 
 
 export {
@@ -19,5 +21,7 @@ export {
     Salt,
     jwt_key ,
     jwt_admin_signature,
-    jwt_user_signature
+    jwt_user_signature,
+    jwt_admin_refresh_signature,
+    jwt_user_refresh_signature
 }

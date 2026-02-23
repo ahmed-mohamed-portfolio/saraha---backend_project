@@ -5,6 +5,7 @@ import { findById, findOne, insertOne } from '../../database/database.service.js
 import { userModel } from '../../database/index.js'
 import jwt from 'jsonwebtoken'
 import { jwt_admin_signature, jwt_key, jwt_user_signature } from '../../../config/index.js'
+import { decodeRefreshToken, generateToken } from '../../common/security/security.js'
 
 
 
@@ -31,33 +32,15 @@ export const login = async (data, issuer) => {
 
     if (existUser) {
 
-        let audience = undefined
-        let signature = undefined
-        switch (existUser.role) {
-            case "0":
-                signature = jwt_admin_signature
-                audience = "Admin"                
-                break;
-
-            case "1":
-                signature = jwt_user_signature
-                audience = "User"
-                break;
-        }
 
         let isMatched = await compareHash(password, existUser.password)
-        
+
         if (isMatched) {
 
-            let token = jwt.sign({ id: existUser._id }, signature, {
-                expiresIn: '1d',
-                notBefore: '2s',
-                issuer,
-                audience
-            })
-            
+            let { accessToken , refreshToken } = generateToken(existUser, issuer)
 
-            return { existUser, token }
+
+            return { existUser, accessToken , refreshToken}
         }
     }
 
@@ -77,3 +60,32 @@ export const getUserById = async (userId) => {
 
 }
 
+
+export const generateAccessToken = async (token)=>{
+
+let decodedData = decodeRefreshToken(token)
+
+    let signature = undefined
+
+    switch (decodedData.aud) {
+        case "Admin":
+            signature = jwt_admin_signature
+            break;
+
+        case "User":
+            signature = jwt_user_signature
+            break;
+    }
+
+
+    let accessToken = jwt.sign({ id: decodedData.id }, signature, {
+        expiresIn: '30m',
+        audience :decodedData.aud
+    })
+
+
+
+    return accessToken 
+
+
+}
