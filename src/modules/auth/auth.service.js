@@ -1,5 +1,5 @@
 import { compareHash, generateHash } from '../../common/hash/hash.js'
-import { ProviderEnums } from '../../common/index.js'
+import { GenderEnums, ProviderEnums } from '../../common/index.js'
 import { ConflictException, NotFoundException, UnauthorizedException } from '../../common/utils/responce/index.js'
 import { findById, findOne, insertOne } from '../../database/database.service.js'
 import { userModel } from '../../database/index.js'
@@ -10,7 +10,7 @@ import { decodeRefreshToken, generateToken } from '../../common/security/securit
 
 
 export const signup = async (data) => {
-    let { userName, email, password } = data
+    let { userName, email, password, phone, dateOfBirth, gender } = data
 
     let existUser = await findOne({ model: userModel, filter: { email } })
     if (existUser) {
@@ -19,7 +19,7 @@ export const signup = async (data) => {
 
     let hashedPassword = await generateHash(password)
 
-    let addedUser = await insertOne({ model: userModel, data: { userName, email, password: hashedPassword } })
+    let addedUser = await insertOne({ model: userModel, data: { userName, email, password: hashedPassword, phone, dateOfBirth, gender: GenderEnums.gender } })
     return addedUser
 }
 
@@ -37,10 +37,10 @@ export const login = async (data, issuer) => {
 
         if (isMatched) {
 
-            let { accessToken , refreshToken } = generateToken(existUser, issuer)
+            let { accessToken, refreshToken } = generateToken(existUser, issuer)
 
 
-            return { existUser, accessToken , refreshToken}
+            return { existUser, accessToken, refreshToken }
         }
     }
 
@@ -61,9 +61,9 @@ export const getUserById = async (userId) => {
 }
 
 
-export const generateAccessToken = async (token)=>{
+export const generateAccessToken = async (token) => {
 
-let decodedData = decodeRefreshToken(token)
+    let decodedData = decodeRefreshToken(token)
 
     let signature = undefined
 
@@ -80,12 +80,12 @@ let decodedData = decodeRefreshToken(token)
 
     let accessToken = jwt.sign({ id: decodedData.id }, signature, {
         expiresIn: '30m',
-        audience :decodedData.aud
+        audience: decodedData.aud
     })
 
 
 
-    return accessToken 
+    return accessToken
 
 
 }

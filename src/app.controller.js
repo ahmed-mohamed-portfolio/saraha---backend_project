@@ -4,13 +4,15 @@ import { databaseConnection } from './database/index.js'
 import { PORT } from '../config/index.js'
 import { globalErrorHandler } from './common/utils/responce/index.js'
 import authRouter from '../src/modules/auth/auth.controller.js'
+import cors from 'cors'
 
 export const bootstrap = async () => {
 
     const app = express()
     app.use(express.json())
+    app.use(cors())
 
-    app.use('/auth',authRouter)
+    app.use('/auth', authRouter)
 
     await databaseConnection()
 
