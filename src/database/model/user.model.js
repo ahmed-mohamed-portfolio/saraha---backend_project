@@ -7,7 +7,7 @@ const UserSchema = new mongoose.Schema({
         required: true,
         minLength: 2,
         maxLength: 20
-    }, 
+    },
     lastName: {
         type: String,
         required: true,
@@ -23,8 +23,16 @@ const UserSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    phone: String,
-    DOB: Date,
+    phone: {
+        type: String,
+        required: true
+
+    },
+    dateOfBirth: {
+        type: Date,
+        required: true
+
+    },
     gender: {
         type: String,
         enum: Object.values(GenderEnums),
@@ -35,9 +43,9 @@ const UserSchema = new mongoose.Schema({
         enum: Object.values(ProviderEnums),
         default: ProviderEnums.System
     },
-    role:{
-        type : String,
-        enum:Object.values(roleEnums),
+    role: {
+        type: String,
+        enum: Object.values(roleEnums),
         default: roleEnums.User
 
     }
