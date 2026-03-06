@@ -3,7 +3,7 @@ import jwt from 'jsonwebtoken'
 
 
 
-export const generateToken = (existUser,issuer) => {
+export const generateToken = (existUser, issuer) => {
 
     let audience = undefined
     let signature = undefined
@@ -24,26 +24,26 @@ export const generateToken = (existUser,issuer) => {
     }
 
 
-    let accessToken = jwt.sign({ id: existUser._id }, signature, {
+    let accessToken = jwt.sign({ id: existUser._id, firstName: existUser.firstName, lastName: existUser.lastName, email: existUser.email }, signature, {
         expiresIn: '30m',
         issuer,
         audience
     })
 
 
-    let refreshToken = jwt.sign({ id: existUser._id }, refreshSignature, {
+    let refreshToken = jwt.sign({ id: existUser._id, firstName: existUser.firstName, lastName: existUser.lastName, email: existUser.email }, refreshSignature, {
         expiresIn: '1y',
         audience
     })
 
-    return {accessToken , refreshToken}
+    return { accessToken, refreshToken }
 }
 
 
 
 
 
-export const decodeToken = (token)=>{
+export const decodeToken = (token) => {
 
     let decoded = jwt.decode(token)
 
@@ -67,7 +67,7 @@ export const decodeToken = (token)=>{
 
 
 
-export const decodeRefreshToken = (token)=>{
+export const decodeRefreshToken = (token) => {
 
     let decoded = jwt.decode(token)
 
