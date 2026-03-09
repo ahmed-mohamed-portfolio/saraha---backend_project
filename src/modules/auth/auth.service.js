@@ -1,11 +1,12 @@
 import { compareHash, generateHash } from '../../common/hash/hash.js'
 import { ProviderEnums } from '../../common/index.js'
-import { ConflictException, NotFoundException } from '../../common/utils/responce/index.js'
+import { BadRequestException, ConflictException, NotFoundException } from '../../common/utils/responce/index.js'
 import { findById, findOne, insertOne } from '../../database/database.service.js'
 import { userModel } from '../../database/index.js'
 import jwt from 'jsonwebtoken'
 import { jwt_admin_signature, jwt_user_signature } from '../../../config/index.js'
 import { decodeRefreshToken, generateToken } from '../../common/security/security.js'
+import { OAuth2Client } from 'google-auth-library';
 
 
 
@@ -31,6 +32,75 @@ export const signup = async (data) => {
 
     let addedUser = await insertOne({ model: userModel, data: { userName, email, password: hashedPassword, phone, dateOfBirth, gender } })
     return addedUser
+}
+
+
+const VerifyGoogleAccount = async (idToken) => {
+
+    const client = new OAuth2Client();
+    const ticket = await client.verifyIdToken({
+        idToken,
+        audience: '454721329331-ieb8vd87r8mlk8bjf4p60ogm0n5biljd.apps.googleusercontent.com',
+    });
+    const payload = ticket.getPayload();
+
+    if (!payload.email_verified) {
+        throw BadRequestException({ message: "fail to verify by google" })
+    }
+
+
+    return payload;
+}
+
+const loginWithGmail = async (idToken, issuer) => {
+
+    const payload = await VerifyGoogleAccount(idToken)
+
+    const user = await findOne({ model: userModel, filter: { email: payload.email, provider: ProviderEnums.Google } })
+
+
+    if (!user) {
+        throw NotFoundException({ message: "not registered account" })
+    }
+
+
+    let { accessToken, refreshToken } = generateToken(user, issuer)
+
+    let data = { user, accessToken, refreshToken }
+    return { message: "user logged in successfully", status: 200, data };
+
+
+}
+
+export const signupWithGmail = async (idToken, issuer) => {
+
+    const payload = await VerifyGoogleAccount(idToken)
+
+    const checkExist = await findOne({ model: userModel, filter: { email: payload.email } })
+
+    if (checkExist) {
+        if (checkExist.provider == ProviderEnums.System) {
+            throw ConflictException({ message: "invalid login porvider" })
+        }
+
+        return loginWithGmail(idToken, issuer)
+    }
+
+
+    const data = await insertOne({
+        model: userModel, data: {
+            firstName: payload.given_name,
+            lastName: payload.family_name,
+            email: payload.email,
+            profilePicture: payload.picture,
+            confireEmail: new Date(),
+            provider: ProviderEnums.Google
+
+        }
+    })
+
+
+    return { message: "user added", status: 201, data };
 }
 
 
@@ -86,7 +156,7 @@ export const generateAccessToken = async (token) => {
     }
 
 
-    let accessToken = jwt.sign({ id: decodedData.id }, signature, {
+    let accessToken = jwt.sign({ id: decodedData.id, firstName: decodedData.firstName, lastName: decodedData.lastName, email: decodedData.email }, signature, {
         expiresIn: '30m',
         audience: decodedData.aud
     })

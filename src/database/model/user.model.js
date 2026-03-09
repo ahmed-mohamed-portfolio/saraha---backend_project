@@ -21,16 +21,22 @@ const UserSchema = new mongoose.Schema({
     },
     password: {
         type: String,
-        required: true
+        required: function () {
+            return this.provider == ProviderEnums.System
+        }
     },
     phone: {
         type: String,
-        required: true
+        required: function () {
+            return this.provider == ProviderEnums.System
+        }
 
     },
     dateOfBirth: {
         type: Date,
-        required: true
+        required: function () {
+            return this.provider == ProviderEnums.System
+        }
 
     },
     gender: {
@@ -48,7 +54,9 @@ const UserSchema = new mongoose.Schema({
         enum: Object.values(roleEnums),
         default: roleEnums.User
 
-    }
+    },
+    profilePicture: String,
+    confireEmail: Date
 })
 
 

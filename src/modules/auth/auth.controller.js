@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { SuccessResponse } from "../../common/utils/responce/index.js";
-import { signup, login, getUserById, generateAccessToken } from './auth.service.js'
-import { auth } from "../../common/middleWare/auth.js";
+import { signup, login, getUserById, generateAccessToken, signupWithGmail } from './auth.service.js'
+import { authentication } from "../../common/middleWare/auth.js";
 
 const router = Router()
 
@@ -12,6 +12,13 @@ router.post('/signup', async (req, res) => {
 
 })
 
+router.post('/signup/gmail', async (req, res) => {
+    let host = `${req.protocol}://${req.host}`;
+
+    let { message, status, data } = await signupWithGmail(req.body.idToken, host)
+    return SuccessResponse({ res, message, status, data })
+
+})
 
 router.post('/login', async (req, res) => {
     let host = `${req.protocol}://${req.host}`;
@@ -21,13 +28,11 @@ router.post('/login', async (req, res) => {
 
 })
 
-
-router.get('/get-user-by-id', auth, async (req, res) => {
+router.get('/get-user-by-id', authentication, async (req, res) => {
 
     let userData = await getUserById(req.userId)
     res.json(userData)
 })
-
 
 router.get('/generate-access-token', async (req, res) => {
 

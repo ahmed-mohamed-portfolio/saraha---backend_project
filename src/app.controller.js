@@ -16,14 +16,12 @@ export const bootstrap = async () => {
 
     await databaseConnection()
 
-
     app.use('{*dummy}', (req, res) => res.status(404).json('invalid route'))
 
     app.use(globalErrorHandler)
 
     app.listen(PORT, () => {
         console.log(`server is running on port ${PORT}`);
-
     })
 
 }
