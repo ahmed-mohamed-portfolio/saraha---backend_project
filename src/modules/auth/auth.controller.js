@@ -2,11 +2,15 @@ import { Router } from "express";
 import { SuccessResponse } from "../../common/utils/responce/index.js";
 import { signup, login, getUserById, generateAccessToken, signupWithGmail } from './auth.service.js'
 import { authentication } from "../../common/middleWare/auth.js";
+import { signinSchema, signupSchema } from "./auth.validation.js";
+import { validation } from "../../common/utils/validation.js";
+
+
 
 const router = Router()
 
+router.post('/signup', validation(signupSchema), async (req, res) => {
 
-router.post('/signup', async (req, res) => {
     let addedUser = await signup(req.body)
     return SuccessResponse({ res, message: 'user added', status: 201, data: addedUser })
 
@@ -20,7 +24,7 @@ router.post('/signup/gmail', async (req, res) => {
 
 })
 
-router.post('/login', async (req, res) => {
+router.post('/login', validation(signinSchema), async (req, res) => {
     let host = `${req.protocol}://${req.host}`;
 
     let loginUser = await login(req.body, host)
