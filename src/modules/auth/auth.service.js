@@ -4,7 +4,7 @@ import { BadRequestException, ConflictException, NotFoundException } from '../..
 import { findById, findOne, insertOne } from '../../database/database.service.js'
 import { userModel } from '../../database/index.js'
 import jwt from 'jsonwebtoken'
-import { jwt_admin_signature, jwt_user_signature } from '../../../config/index.js'
+import { gmail_client_id, jwt_admin_signature, jwt_user_signature } from '../../../config/index.js'
 import { decodeRefreshToken, generateToken } from '../../common/security/security.js'
 import { OAuth2Client } from 'google-auth-library';
 
@@ -40,7 +40,7 @@ const VerifyGoogleAccount = async (idToken) => {
     const client = new OAuth2Client();
     const ticket = await client.verifyIdToken({
         idToken,
-        audience: '454721329331-ieb8vd87r8mlk8bjf4p60ogm0n5biljd.apps.googleusercontent.com',
+        audience: gmail_client_id,
     });
     const payload = ticket.getPayload();
 
@@ -87,7 +87,7 @@ export const signupWithGmail = async (idToken, issuer) => {
     }
 
 
-    const data = await insertOne({
+    const user = await insertOne({
         model: userModel, data: {
             firstName: payload.given_name,
             lastName: payload.family_name,
@@ -98,7 +98,9 @@ export const signupWithGmail = async (idToken, issuer) => {
 
         }
     })
+    let { accessToken, refreshToken } = generateToken(user, issuer)
 
+    let data = { user, accessToken, refreshToken }
 
     return { message: "user added", status: 201, data };
 }
