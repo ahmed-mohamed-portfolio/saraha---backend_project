@@ -169,3 +169,16 @@ export const generateAccessToken = async (token) => {
 
 
 }
+
+
+export const sharedUser = async (userId) => {
+
+    let userData = await findOne({ model: userModel, filter: { _id: userId }, select: "-password -role -provider" })
+    if (userData) {
+        return userData
+
+    }
+
+    return NotFoundException({ message: "user not found" })
+
+}

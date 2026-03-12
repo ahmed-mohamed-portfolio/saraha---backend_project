@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { SuccessResponse } from "../../common/utils/responce/index.js";
-import { signup, login, getUserById, generateAccessToken, signupWithGmail } from './auth.service.js'
+import { signup, login, getUserById, generateAccessToken, signupWithGmail, sharedUser } from './auth.service.js'
 import { authentication } from "../../common/middleWare/auth.js";
 import { signinSchema, signupSchema } from "./auth.validation.js";
 import { validation } from "../../common/utils/validation.js";
@@ -46,5 +46,12 @@ router.get('/generate-access-token', async (req, res) => {
 
 })
 
+
+router.get("/shared-user/:id", async (req, res) => {
+    let userData = await sharedUser(req.params.id)
+
+    return SuccessResponse({ res, status: 200, data: userData })
+
+})
 
 export default router
