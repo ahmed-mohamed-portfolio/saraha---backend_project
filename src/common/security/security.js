@@ -23,12 +23,14 @@ export const generateToken = (existUser, issuer) => {
             break;
     }
 
-
+    //!i put it for test 1m
     let accessToken = jwt.sign({ id: existUser._id, firstName: existUser.firstName, lastName: existUser.lastName, email: existUser.email }, signature, {
-        expiresIn: '30m',
+        expiresIn: '100m',
         issuer,
         audience
     })
+
+    console.log("accessToken", accessToken);
 
 
     let refreshToken = jwt.sign({ id: existUser._id, firstName: existUser.firstName, lastName: existUser.lastName, email: existUser.email }, refreshSignature, {

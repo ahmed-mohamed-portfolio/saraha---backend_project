@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { SuccessResponse } from "../../common/utils/responce/success.responce.js";
-import { sendMessage } from "./message.service.js";
+import { getAllMessages, sendMessage } from "./message.service.js";
+import { authentication } from "../../common/middleWare/auth.js";
 
 const router = Router()
 
@@ -11,5 +12,9 @@ router.post('/send-message/:id', async (req, res) => {
 })
 
 
+router.get('/get-all-messages', authentication, async (req, res) => {
 
+    let data = await getAllMessages(req.userId)
+    SuccessResponse({ res, message: "messages get successfully", status: 200, data })
+})
 export default router

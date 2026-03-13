@@ -11,6 +11,7 @@ export const authentication = (req, res, next) => {
     }
 
 
+
     const [flag, token] = authorization.split(' ')
 
     switch (flag) {

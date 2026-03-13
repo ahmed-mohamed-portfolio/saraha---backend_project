@@ -41,11 +41,12 @@ router.get('/get-user-by-id', authentication, async (req, res) => {
 router.get('/generate-access-token', async (req, res) => {
 
     let { authorization } = req.headers
+
+
     let accessToken = await generateAccessToken(authorization)
     return SuccessResponse({ res, message: 'access token created', status: 200, data: accessToken })
 
 })
-
 
 router.get("/shared-user/:id", async (req, res) => {
     let userData = await sharedUser(req.params.id)
