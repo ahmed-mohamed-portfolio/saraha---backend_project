@@ -159,7 +159,7 @@ export const generateAccessToken = async (token) => {
 
 
     let accessToken = jwt.sign({ id: decodedData.id, firstName: decodedData.firstName, lastName: decodedData.lastName, email: decodedData.email }, signature, {
-        expiresIn: '30m',
+        expiresIn: '1m',
         audience: decodedData.aud
     })
 

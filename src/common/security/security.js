@@ -25,12 +25,11 @@ export const generateToken = (existUser, issuer) => {
 
     //!i put it for test 1m
     let accessToken = jwt.sign({ id: existUser._id, firstName: existUser.firstName, lastName: existUser.lastName, email: existUser.email }, signature, {
-        expiresIn: '100m',
+        expiresIn: '1m',
         issuer,
         audience
     })
 
-    console.log("accessToken", accessToken);
 
 
     let refreshToken = jwt.sign({ id: existUser._id, firstName: existUser.firstName, lastName: existUser.lastName, email: existUser.email }, refreshSignature, {
@@ -70,8 +69,9 @@ export const decodeToken = (token) => {
 
 
 export const decodeRefreshToken = (token) => {
+    const splitToken = token.startsWith('Bearer ') ? token.split(' ')[1] : token;
 
-    let decoded = jwt.decode(token)
+    let decoded = jwt.decode(splitToken)
 
     let refreshSignature = undefined
 

@@ -34,7 +34,7 @@ export const getAllMessages = async (userId) => {
     }
 
     let messages = await find({ model: messageModel, filter: { receverId: userId }, select: 'message' })
-    console.log("I AM here", messages);
+
     if (!messages.length) {
         return []
     }
