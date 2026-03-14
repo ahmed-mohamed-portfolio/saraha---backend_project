@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { SuccessResponse } from "../../common/utils/responce/success.responce.js";
-import { getAllMessages, sendMessage } from "./message.service.js";
+import { getAllMessages, getMessageById, sendMessage } from "./message.service.js";
 import { authentication } from "../../common/middleWare/auth.js";
 
 const router = Router()
@@ -17,4 +17,13 @@ router.get('/get-all-messages', authentication, async (req, res) => {
     let data = await getAllMessages(req.userId)
     SuccessResponse({ res, message: "messages get successfully", status: 200, data })
 })
+
+
+router.get('/get-one-messages/:msgId', authentication, async (req, res) => {
+
+    let data = await getMessageById(req.params.msgId, req.userId)
+    SuccessResponse({ res, message: "message get successfully", status: 200, data })
+})
+
+
 export default router

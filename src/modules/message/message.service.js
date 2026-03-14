@@ -1,5 +1,5 @@
 import { BadRequestException, NotFoundException } from "../../common/utils/responce/error.responce.js"
-import { find, findById, insertOne } from "../../database/database.service.js"
+import { find, findById, findOne, insertOne } from "../../database/database.service.js"
 import { userModel } from "../../database/index.js"
 import { messageModel } from "../../database/model/message.model.js"
 
@@ -24,8 +24,6 @@ export const sendMessage = async (body, userId) => {
 
 }
 
-
-
 export const getAllMessages = async (userId) => {
 
     let existedUser = await findById({ model: userModel, id: userId })
@@ -41,4 +39,13 @@ export const getAllMessages = async (userId) => {
 
     return messages
 
+}
+
+export const getMessageById = async (messageId, userId) => {
+    const message = await findOne({ model: messageModel, filter: { _id: messageId, receverId: userId } })
+    if (!message) {
+        BadRequestException('message not found')
+    }
+
+    return message
 }

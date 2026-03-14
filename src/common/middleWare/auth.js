@@ -1,5 +1,5 @@
 import { decodeToken } from '../security/security.js'
-import { BadRequestException } from '../utils/responce/error.responce.js'
+import { BadRequestException, UnauthorizedException } from '../utils/responce/error.responce.js'
 
 
 export const authentication = (req, res, next) => {
