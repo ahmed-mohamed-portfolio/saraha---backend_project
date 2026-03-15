@@ -32,7 +32,7 @@ router.post('/login', validation(signinSchema), async (req, res) => {
 
 })
 
-router.get('/get-user-by-id', authentication, async (req, res) => {
+router.get('/get-user-by-id', authentication, async (req, res) => { //*i dont use it in front end .. when i need to get user infos i decode jwt access token and get infos from it
 
     let userData = await getUserById(req.userId)
     res.json(userData)
