@@ -8,9 +8,6 @@ const router = Router()
 
 router.post('/send-message/:id', multer_local({ customPath: "profileImages", allowedType: extensions.image }).single("image"), async (req, res) => {
 
-    let baseUrl = `${req.protocol}://${req.host}/`
-    req.file.finalPath = `${baseUrl}${req.file.destination}/${req.file.filename}`
-
     let data = await sendMessage(req.body, req.params.id, req.file)
 
     SuccessResponse({ res, message: "message sent successfully", status: 200, data })

@@ -13,11 +13,12 @@ let jwt_user_signature = process.env.JWT_USER_SIGNATURE
 let jwt_admin_refresh_signature = process.env.JWT_ADMIN_REFRESH_SIGNATURE
 let jwt_user_refresh_signature = process.env.JWT_USER_REFRESH_SIGNATURE
 let gmail_client_id = process.env.GMAIL_CLIENT_ID
-
+let base_url = process.env.BASE_URL
 export {
     DB_URL,
     PORT,
     PROJ_MOOD,
+    base_url,
     Salt,
     jwt_key,
     jwt_admin_signature,

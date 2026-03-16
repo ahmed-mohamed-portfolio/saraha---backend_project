@@ -31,9 +31,7 @@ export let multer_local = ({ customPath, allowedType } = { customPath: "general"
 
 
 
-
         filename: function (req, file, cb) {
-
 
             const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9)
             cb(null, uniqueSuffix + '-' + file.originalname)
@@ -45,16 +43,11 @@ export let multer_local = ({ customPath, allowedType } = { customPath: "general"
 
     let fileFilter = function (req, file, cb) {
 
-
-        console.log(file.mimetype);
-
-
         if (allowedType.includes(file.mimetype)) {
             cb(null, true)
         } else {
             cb("wrong type", false)
         }
-
 
     }
 

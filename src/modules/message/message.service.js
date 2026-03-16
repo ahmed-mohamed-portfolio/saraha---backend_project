@@ -1,3 +1,4 @@
+import { base_url } from "../../../config/config.service.js"
 import { BadRequestException, NotFoundException } from "../../common/utils/responce/error.responce.js"
 import { find, findById, findByIdAndDelete, findOne, findOneAndDelete, insertOne } from "../../database/database.service.js"
 import { userModel } from "../../database/index.js"
@@ -6,6 +7,7 @@ import { messageModel } from "../../database/model/message.model.js"
 
 
 export const sendMessage = async (body, userId, file) => {
+    console.log("file", file);
 
     let { message } = body
 
@@ -15,8 +17,8 @@ export const sendMessage = async (body, userId, file) => {
     }
 
     let image = ''
-    if (file.finalPath) {
-        image = file.finalPath;
+    if (file) {
+        image = `${base_url}${file.path}`
     }
     const addMessage = await insertOne({ model: messageModel, data: { message, image, receverId: userId } })
     if (!message) {
