@@ -7,7 +7,6 @@ import { messageModel } from "../../database/model/message.model.js"
 
 
 export const sendMessage = async (body, userId, file) => {
-    console.log("file", file);
 
     let { message } = body
 
