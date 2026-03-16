@@ -14,6 +14,7 @@ export const bootstrap = async () => {
     app.use(express.json())
     app.use(cors())
     app.use(express.urlencoded({ extended: true }));
+    app.use('/upload', express.static("upload"))
 
     app.use('/auth', authRouter)
     app.use('/message', messageRouter)

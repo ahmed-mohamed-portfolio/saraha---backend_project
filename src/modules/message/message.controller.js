@@ -2,12 +2,18 @@ import { Router } from "express";
 import { SuccessResponse } from "../../common/utils/responce/success.responce.js";
 import { deleteMessage, getAllMessages, getMessageById, sendMessage } from "./message.service.js";
 import { authentication } from "../../common/middleWare/auth.js";
+import { extensions, multer_local } from "../../common/middleWare/multer.js";
 
 const router = Router()
 
-router.post('/send-message/:id', async (req, res) => {
+router.post('/send-message/:id', multer_local({ customPath: "profileImages", allowedType: extensions.image }).single("image"), async (req, res) => {
 
-    let data = await sendMessage(req.body, req.params.id)
+    let baseUrl = `${req.protocol}://${req.host}/`
+    req.file.finalPath = `${baseUrl}${req.file.destination}/${req.file.filename}`
+
+    let data = await sendMessage(req.body, req.params.id, req.file)
+    console.log(data);
+
     SuccessResponse({ res, message: "message sent successfully", status: 200, data })
 })
 

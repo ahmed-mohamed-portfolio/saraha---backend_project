@@ -5,21 +5,25 @@ import { messageModel } from "../../database/model/message.model.js"
 
 
 
-export const sendMessage = async (body, userId) => {
+export const sendMessage = async (body, userId, file) => {
 
-    let { message, image } = body
+    let { message } = body
 
     const user = await findById({ model: userModel, id: userId })
     if (!user) {
         return NotFoundException({ message: "user not found" })
     }
 
+    let image = ''
+    if (file.finalPath) {
+        image = file.finalPath;
+    }
     const addMessage = await insertOne({ model: messageModel, data: { message, image, receverId: userId } })
     if (!message) {
         BadRequestException({ message: "message not sent" })
     }
 
-    return message
+    return addMessage
 
 
 }
@@ -31,7 +35,7 @@ export const getAllMessages = async (userId) => {
         return BadRequestException('invalid user')
     }
 
-    let messages = await find({ model: messageModel, filter: { receverId: userId }, select: 'message' })
+    let messages = await find({ model: messageModel, filter: { receverId: userId }, select: 'message image' })
 
     if (!messages.length) {
         return []
