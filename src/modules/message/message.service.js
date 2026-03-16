@@ -41,10 +41,10 @@ export const getAllMessages = async (userId) => {
 
 }
 
-export const getMessageById = async (messageId, userId) => {
-    const message = await findOne({ model: messageModel, filter: { _id: messageId, receverId: userId } })
+export const getMessageById = async (messageId) => {
+    const message = await findOne({ model: messageModel, filter: { _id: messageId } })
     if (!message) {
-        BadRequestException('message not found')
+        BadRequestException({ message: "message not found" })
     }
 
     return message

@@ -54,6 +54,12 @@ const UserSchema = new mongoose.Schema({
         enum: Object.values(roleEnums),
         default: roleEnums.User
 
+    }, shareProfileName: {
+        type: String,
+        required: true,
+        unique: true
+
+
     },
     profilePicture: String,
     confireEmail: Date

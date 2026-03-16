@@ -19,9 +19,9 @@ router.get('/get-all-messages', authentication, async (req, res) => {
 })
 
 
-router.get('/get-one-messages/:msgId', authentication, async (req, res) => {
+router.get('/get-one-messages/:msgId', async (req, res) => {
 
-    let data = await getMessageById(req.params.msgId, req.userId)
+    let data = await getMessageById(req.params.msgId)
     SuccessResponse({ res, message: "message get successfully", status: 200, data })
 })
 

@@ -32,10 +32,11 @@ router.post('/login', validation(signinSchema), async (req, res) => {
 
 })
 
-router.get('/get-user-by-id', authentication, async (req, res) => { //*i dont use it in front end .. when i need to get user infos i decode jwt access token and get infos from it
+router.get('/get-user-by-id', authentication, async (req, res) => {
 
     let userData = await getUserById(req.userId)
-    res.json(userData)
+    return SuccessResponse({ res, message: 'user data got successfully', status: 200, data: userData })
+
 })
 
 router.get('/generate-access-token', async (req, res) => {
@@ -48,8 +49,9 @@ router.get('/generate-access-token', async (req, res) => {
 
 })
 
-router.get("/shared-user/:id", async (req, res) => {
-    let userData = await sharedUser(req.params.id)
+router.get("/shared-user/:profileName", async (req, res) => {
+
+    let userData = await sharedUser(req.params.profileName)
 
     return SuccessResponse({ res, status: 200, data: userData })
 

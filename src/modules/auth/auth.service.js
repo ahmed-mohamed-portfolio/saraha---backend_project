@@ -12,7 +12,7 @@ import { OAuth2Client } from 'google-auth-library';
 
 export const signup = async (data) => {
 
-    let { userName, email, password, phone, dateOfBirth, gender } = data
+    let { userName, email, password, phone, dateOfBirth, gender, shareProfileName } = data
 
     switch (gender) {
         case 'female': gender = 1
@@ -28,12 +28,16 @@ export const signup = async (data) => {
         return ConflictException({ message: "User Already Exists" })
     }
 
+    let profileName = await findOne({ model: userModel, filter: { shareProfileName } })
+    if (profileName) {
+        return ConflictException({ message: "profile Name Already Exists .. Try Another One" })
+    }
+
     let hashedPassword = await generateHash(password)
 
-    let addedUser = await insertOne({ model: userModel, data: { userName, email, password: hashedPassword, phone, dateOfBirth, gender } })
+    let addedUser = await insertOne({ model: userModel, data: { userName, email, password: hashedPassword, phone, dateOfBirth, gender, shareProfileName } })
     return addedUser
 }
-
 
 const VerifyGoogleAccount = async (idToken) => {
 
@@ -94,7 +98,8 @@ export const signupWithGmail = async (idToken, issuer) => {
             email: payload.email,
             profilePicture: payload.picture,
             confireEmail: new Date(),
-            provider: ProviderEnums.Google
+            provider: ProviderEnums.Google,
+            shareProfileName: payload.given_name + payload.family_name + payload.sub
 
         }
     })
@@ -104,7 +109,6 @@ export const signupWithGmail = async (idToken, issuer) => {
 
     return { message: "user added", status: 201, data };
 }
-
 
 export const login = async (data, issuer) => {
 
@@ -127,19 +131,6 @@ export const login = async (data, issuer) => {
     return NotFoundException({ message: "user not found" })
 
 }
-
-
-export const getUserById = async (userId) => {
-
-    let userData = await findById({ model: userModel, id: userId })
-    if (userData) {
-        return userData
-    }
-
-    return NotFoundException({ message: "user not found" })
-
-}
-
 
 export const generateAccessToken = async (token) => {
 
@@ -171,9 +162,21 @@ export const generateAccessToken = async (token) => {
 }
 
 
-export const sharedUser = async (userId) => {
 
-    let userData = await findOne({ model: userModel, filter: { _id: userId }, select: "-password -role -provider" })
+export const getUserById = async (userId) => {
+
+    let userData = await findById({ model: userModel, id: userId, select: '-password' })
+    if (userData) {
+        return userData
+    }
+
+    return NotFoundException({ message: "user not found" })
+
+}
+
+export const sharedUser = async (profileName) => {
+
+    let userData = await findOne({ model: userModel, filter: { shareProfileName: profileName }, select: "-password -role -provider" })
     if (userData) {
         return userData
 
