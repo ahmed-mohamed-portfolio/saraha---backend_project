@@ -3,10 +3,12 @@ import { SuccessResponse } from "../../common/utils/responce/success.responce.js
 import { deleteMessage, getAllMessages, getMessageById, sendMessage } from "./message.service.js";
 import { authentication } from "../../common/middleWare/auth.js";
 import { extensions, multer_local } from "../../common/middleWare/multer.js";
+import { validation } from "../../common/utils/validation.js";
+import { messageSchema } from "./message.validation.js";
 
 const router = Router()
 
-router.post('/send-message/:id', multer_local({ customPath: "profileImages", allowedType: extensions.image }).single("image"), async (req, res) => {
+router.post('/send-message/:id', multer_local({ customPath: "profileImages", allowedType: extensions.image }).single("image"), validation(messageSchema), async (req, res) => {
 
     let data = await sendMessage(req.body, req.params.id, req.file)
 

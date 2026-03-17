@@ -18,8 +18,6 @@ export const extensions = {
 export let multer_local = ({ customPath, allowedType } = { customPath: "general" }) => {
 
 
-
-
     const storage = multer.diskStorage({
         destination: function (req, file, cb) {
             let filePath = `upload/${customPath}`
@@ -50,7 +48,6 @@ export let multer_local = ({ customPath, allowedType } = { customPath: "general"
         }
 
     }
-
 
 
 

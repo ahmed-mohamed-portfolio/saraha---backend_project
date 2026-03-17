@@ -4,14 +4,16 @@ import { signup, login, getUserById, generateAccessToken, signupWithGmail, share
 import { authentication } from "../../common/middleWare/auth.js";
 import { signinSchema, signupSchema } from "./auth.validation.js";
 import { validation } from "../../common/utils/validation.js";
-
+import { extensions, multer_local } from "../../common/middleWare/multer.js"
 
 
 const router = Router()
 
-router.post('/signup', validation(signupSchema), async (req, res) => {
+router.post('/signup', multer_local({ customPath: "profileImages", allowedType: extensions.image }).single("image"), validation(signupSchema), async (req, res) => {
 
-    let addedUser = await signup(req.body)
+    const body = JSON.parse(req.body.registerForm)
+
+    let addedUser = await signup(body, req.file)
     return SuccessResponse({ res, message: 'user added', status: 201, data: addedUser })
 
 })

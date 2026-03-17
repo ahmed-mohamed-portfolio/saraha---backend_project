@@ -4,13 +4,13 @@ import { BadRequestException, ConflictException, NotFoundException } from '../..
 import { findById, findOne, insertOne } from '../../database/database.service.js'
 import { userModel } from '../../database/index.js'
 import jwt from 'jsonwebtoken'
-import { gmail_client_id, jwt_admin_signature, jwt_user_signature } from '../../../config/index.js'
+import { base_url, gmail_client_id, jwt_admin_signature, jwt_user_signature } from '../../../config/index.js'
 import { decodeRefreshToken, generateToken } from '../../common/security/security.js'
 import { OAuth2Client } from 'google-auth-library';
 
 
 
-export const signup = async (data) => {
+export const signup = async (data, file) => {
 
     let { userName, email, password, phone, dateOfBirth, gender, shareProfileName } = data
 
@@ -33,9 +33,15 @@ export const signup = async (data) => {
         return ConflictException({ message: "profile Name Already Exists .. Try Another One" })
     }
 
+
+    let image = '';
+    if (file) {
+        image = `${base_url}${file.path}`
+    }
+
     let hashedPassword = await generateHash(password)
 
-    let addedUser = await insertOne({ model: userModel, data: { userName, email, password: hashedPassword, phone, dateOfBirth, gender, shareProfileName } })
+    let addedUser = await insertOne({ model: userModel, data: { userName, email, password: hashedPassword, phone, dateOfBirth, gender, shareProfileName, profilePicture: image } })
     return addedUser
 }
 
@@ -160,8 +166,6 @@ export const generateAccessToken = async (token) => {
 
 
 }
-
-
 
 export const getUserById = async (userId) => {
 
