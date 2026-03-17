@@ -42,7 +42,7 @@ export const getAllMessages = async (userId) => {
         return []
     }
 
-    return messages
+    return messages.reverse()
 
 }
 
