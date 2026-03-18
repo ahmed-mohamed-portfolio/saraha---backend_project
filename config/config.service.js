@@ -14,6 +14,7 @@ let jwt_admin_refresh_signature = process.env.JWT_ADMIN_REFRESH_SIGNATURE
 let jwt_user_refresh_signature = process.env.JWT_USER_REFRESH_SIGNATURE
 let gmail_client_id = process.env.GMAIL_CLIENT_ID
 let base_url = process.env.BASE_URL
+let redis_uri = process.env.REDIS_URI
 export {
     DB_URL,
     PORT,
@@ -25,5 +26,6 @@ export {
     jwt_user_signature,
     jwt_admin_refresh_signature,
     jwt_user_refresh_signature,
-    gmail_client_id
+    gmail_client_id,
+    redis_uri
 }
