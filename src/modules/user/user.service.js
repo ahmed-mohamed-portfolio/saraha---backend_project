@@ -12,7 +12,7 @@ export const updateProfile = async (userId, data, file) => {
     let hashedPassword
     if (password) {
         hashedPassword = await generateHash(password)
-        console.log("password", password);
+
     }
 
 
