@@ -62,7 +62,12 @@ const UserSchema = new mongoose.Schema({
 
     },
     profilePicture: String,
-    confireEmail: Date
+    confireEmail: Date,
+    credentialsUpdatedAt: {
+        type: Date,
+        default: Date.now
+    }
+
 })
 
 

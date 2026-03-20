@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { SuccessResponse } from "../../common/utils/responce/index.js";
-import { signup, login, getUserById, generateAccessToken, signupWithGmail, sharedUser } from './auth.service.js'
+import { signup, login, getUserById, generateAccessToken, signupWithGmail, sharedUser, logOutFromAllDevices } from './auth.service.js'
 import { authentication } from "../../common/middleWare/auth.js";
 import { signinSchema, signupSchema } from "./auth.validation.js";
 import { validation } from "../../common/utils/validation.js";
@@ -58,5 +58,20 @@ router.get("/shared-user/:profileName", async (req, res) => {
     return SuccessResponse({ res, status: 200, data: userData })
 
 })
+
+
+router.patch("/logout-from-all-devices", authentication, async (req, res) => {
+
+
+    await logOutFromAllDevices(req.userId)
+
+
+    return SuccessResponse({ res, message: 'logged out from all devices successfully', status: 200 })
+
+
+})
+
+
+
 
 export default router

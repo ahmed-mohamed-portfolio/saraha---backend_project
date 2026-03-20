@@ -1,5 +1,8 @@
 import { jwt_admin_refresh_signature, jwt_admin_signature, jwt_user_refresh_signature, jwt_user_signature } from "../../../config/index.js"
 import jwt from 'jsonwebtoken'
+import { userModel } from "../../database/index.js"
+import { findById } from "../../database/database.service.js"
+import { BadRequestException } from "../utils/responce/error.responce.js"
 
 
 
@@ -68,7 +71,7 @@ export const decodeToken = (token) => {
 
 
 
-export const decodeRefreshToken = (token) => {
+export const decodeRefreshToken = async (token) => {
     const splitToken = token.startsWith('Bearer ') ? token.split(' ')[1] : token;
 
     let decoded = jwt.decode(splitToken)
@@ -86,6 +89,15 @@ export const decodeRefreshToken = (token) => {
     }
 
     let decodedData = jwt.verify(token, refreshSignature)
+
+
+    let user = await findById({ model: userModel, id: decodedData.id })
+
+    if (new Date(user.credentialsUpdatedAt).getTime() > decodedData.iat * 1000) {
+        return BadRequestException({ message: 'invalid token' })
+    }
+
+
 
     return decodedData
 }

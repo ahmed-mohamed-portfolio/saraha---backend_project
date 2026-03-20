@@ -1,7 +1,7 @@
 import { compareHash, generateHash } from '../../common/hash/hash.js'
 import { ProviderEnums } from '../../common/index.js'
 import { BadRequestException, ConflictException, NotFoundException } from '../../common/utils/responce/index.js'
-import { findById, findOne, insertOne } from '../../database/database.service.js'
+import { findById, findByIdAndUpdate, findOne, insertOne } from '../../database/database.service.js'
 import { userModel } from '../../database/index.js'
 import jwt from 'jsonwebtoken'
 import { base_url, gmail_client_id, jwt_admin_signature, jwt_user_signature } from '../../../config/index.js'
@@ -140,7 +140,7 @@ export const login = async (data, issuer) => {
 
 export const generateAccessToken = async (token) => {
 
-    let decodedData = decodeRefreshToken(token)
+    let decodedData = await decodeRefreshToken(token)
 
     let signature = undefined
 
@@ -189,3 +189,29 @@ export const sharedUser = async (profileName) => {
     return NotFoundException({ message: "user not found" })
 
 }
+
+
+
+
+export const logOutFromAllDevices = async (userId) => {
+
+
+    let user = await findByIdAndUpdate({ model: userModel, id: userId, data: { credentialsUpdatedAt: new Date() }, select: '_id' })
+
+
+    if (!user) {
+        return NotFoundException({ message: "user not found" })
+    }
+
+
+    return true
+}
+
+
+
+
+
+
+
+
+
