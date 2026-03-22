@@ -4,6 +4,7 @@ import { userModel } from "../../database/index.js"
 import { findById } from "../../database/database.service.js"
 import { BadRequestException } from "../utils/responce/error.responce.js"
 import crypto from 'node:crypto'
+import { get } from "../services/redis.service.js"
 
 
 export const generateToken = (existUser, issuer) => {
@@ -49,10 +50,6 @@ export const generateToken = (existUser, issuer) => {
     return { accessToken, refreshToken }
 }
 
-
-
-
-
 export const decodeToken = (token) => {
 
     let decoded = jwt.decode(token)
@@ -73,9 +70,6 @@ export const decodeToken = (token) => {
 
     return decodedData
 }
-
-
-
 
 export const decodeRefreshToken = async (token) => {
     const splitToken = token.startsWith('Bearer ') ? token.split(' ')[1] : token;

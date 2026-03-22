@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { SuccessResponse } from "../../common/utils/responce/index.js";
-import { signup, login, getUserById, generateAccessToken, signupWithGmail, sharedUser, logOutFromAllDevices, logOut } from './auth.service.js'
+import { signup, login, getUserById, generateAccessToken, signupWithGmail, sharedUser, logOutFromAllDevices, logOut, verifyEmail } from './auth.service.js'
 import { authentication } from "../../common/middleWare/auth.js";
 import { signinSchema, signupSchema } from "./auth.validation.js";
 import { validation } from "../../common/utils/validation.js";
@@ -18,7 +18,17 @@ router.post('/signup', multer_local({ customPath: "profileImages", allowedType: 
 
 })
 
+router.post("/verify", async (req, res) => {
+    console.log("req.body", req.body);
+
+    let data = await verifyEmail(req.body)
+    return SuccessResponse({ res, message: 'email verified', status: 200, data })
+
+})
+
 router.post('/signup/gmail', async (req, res) => {
+
+    //? i used this email ==> ahmed.mohamed.connect@gmail.com
     let host = `${req.protocol}://${req.host}`;
 
     let { message, status, data } = await signupWithGmail(req.body.idToken, host)
@@ -59,25 +69,17 @@ router.get("/shared-user/:profileName", async (req, res) => {
 
 })
 
-
 router.patch("/logout-from-all-devices", authentication, async (req, res) => {
 
-
     await logOutFromAllDevices(req.userId)
-
-
     return SuccessResponse({ res, message: 'logged out from all devices successfully', status: 200 })
-
 
 })
 
-
 router.post("/logout", authentication, async (req, res) => {
-
 
     await logOut(req.userId, req.jti)
     return SuccessResponse({ res, message: 'logged out successfully', status: 200 })
-
 
 })
 

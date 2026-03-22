@@ -66,6 +66,10 @@ const UserSchema = new mongoose.Schema({
     credentialsUpdatedAt: {
         type: Date,
         default: Date.now
+    },
+    isVerfied: {
+        type: Boolean,
+        default: false
     }
 
 })

@@ -15,6 +15,9 @@ let jwt_user_refresh_signature = process.env.JWT_USER_REFRESH_SIGNATURE
 let gmail_client_id = process.env.GMAIL_CLIENT_ID
 let base_url = process.env.BASE_URL
 let redis_uri = process.env.REDIS_URI
+let nodeMailer_app_password = process.env.NODEMAILER_APP_PASSWORD
+let nodeMailer_app_email = process.env.NODEMAILER_APP_EMAIL
+
 export {
     DB_URL,
     PORT,
@@ -27,5 +30,7 @@ export {
     jwt_admin_refresh_signature,
     jwt_user_refresh_signature,
     gmail_client_id,
-    redis_uri
+    redis_uri,
+    nodeMailer_app_password,
+    nodeMailer_app_email
 }

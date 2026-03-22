@@ -8,7 +8,9 @@ import { base_url, gmail_client_id, jwt_admin_signature, jwt_user_signature } fr
 import { decodeRefreshToken, generateToken } from '../../common/security/security.js'
 import { OAuth2Client } from 'google-auth-library';
 import crypto from "node:crypto"
-import { deleteByPattern, deleteKey, keys, set } from "../../common/services/index.js"
+import { deleteByPattern, deleteKey, keys, set, get } from "../../common/services/index.js"
+
+import { event } from "../../common/utils/email/email.events.js"
 
 export const signup = async (data, file) => {
 
@@ -42,6 +44,10 @@ export const signup = async (data, file) => {
     let hashedPassword = await generateHash(password)
 
     let addedUser = await insertOne({ model: userModel, data: { userName, email, password: hashedPassword, phone, dateOfBirth, gender, shareProfileName, profilePicture: image } })
+
+    //? send gmail verify code
+    event.emit("verifyEmail", { userId: addedUser._id, email })
+
     return addedUser
 }
 
@@ -105,8 +111,8 @@ export const signupWithGmail = async (idToken, issuer) => {
             profilePicture: payload.picture,
             confireEmail: new Date(),
             provider: ProviderEnums.Google,
-            shareProfileName: payload.given_name + payload.family_name + payload.sub
-
+            shareProfileName: payload.given_name + payload.family_name + payload.sub,
+            isVerfied: true
         }
     })
     let { accessToken, refreshToken } = generateToken(user, issuer)
@@ -192,9 +198,6 @@ export const sharedUser = async (profileName) => {
 
 }
 
-
-
-
 export const logOutFromAllDevices = async (userId) => {
 
 
@@ -210,10 +213,6 @@ export const logOutFromAllDevices = async (userId) => {
 
     return true
 }
-
-
-
-
 
 export const logOut = async (userId, jti) => {
 
@@ -240,3 +239,27 @@ export const logOut = async (userId, jti) => {
 
 
 
+export const verifyEmail = async (data) => {
+    let { email, code } = data
+
+
+    let user = await findOne({ model: userModel, filer: { email } })
+
+    if (!user) {
+        return NotFoundException({ message: "email not found" })
+    }
+
+    if (user.isVerfied) {
+        return ConflictException({ message: "email already verified" })
+    }
+
+    let redisCode = await get(`OTP::${user._id}`)
+
+
+    if (await compareHash(code, redisCode)) {
+        let userData = await findByIdAndUpdate({ model: userModel, id: user._id, data: { isVerfied: true }, select: '-password', options: { new: true } })
+        return userData
+    }
+
+    return BadRequestException({ message: "code not right" })
+}

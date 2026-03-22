@@ -45,7 +45,6 @@ export const ttl = async (key) => {
 };
 
 
-
 export const exists = async (key) => {
     try {
         return await redisClient.exists(key);
@@ -62,7 +61,6 @@ export const expire = async ({ key, ttl }) => {
         console.log(`Fail in redis expire operation ${error}`);
     }
 };
-
 
 
 export const mGet = async (keys = []) => {
@@ -84,7 +82,6 @@ export const keys = async (prefix) => {
 };
 
 
-
 export const deleteKey = async (key) => {
     try {
         if (!key.length) return 0;
@@ -93,8 +90,6 @@ export const deleteKey = async (key) => {
         console.log(`Fail in redis del operation ${error}`);
     }
 };
-
-
 
 
 export const deleteByPattern = async (pattern) => {
