@@ -9,8 +9,9 @@ import { decodeRefreshToken, generateToken } from '../../common/security/securit
 import { OAuth2Client } from 'google-auth-library';
 import crypto from "node:crypto"
 import { deleteByPattern, deleteKey, keys, set, get } from "../../common/services/index.js"
-
 import { event } from "../../common/utils/email/email.events.js"
+
+
 
 export const signup = async (data, file) => {
 
@@ -236,8 +237,6 @@ export const logOut = async (userId, jti) => {
     return addToken
 
 }
-
-
 
 export const verifyEmail = async (data) => {
     let { email, code } = data

@@ -2,12 +2,14 @@ import { Router } from "express";
 import { SuccessResponse } from "../../common/utils/responce/index.js";
 import { signup, login, getUserById, generateAccessToken, signupWithGmail, sharedUser, logOutFromAllDevices, logOut, verifyEmail } from './auth.service.js'
 import { authentication } from "../../common/middleWare/auth.js";
-import { signinSchema, signupSchema } from "./auth.validation.js";
+import { signinSchema, signupSchema, verifySchema } from "./auth.validation.js";
 import { validation } from "../../common/utils/validation.js";
 import { extensions, multer_local } from "../../common/middleWare/multer.js"
 
 
 const router = Router()
+
+
 
 router.post('/signup', multer_local({ customPath: "profileImages", allowedType: extensions.image }).single("image"), validation(signupSchema), async (req, res) => {
 
@@ -18,8 +20,7 @@ router.post('/signup', multer_local({ customPath: "profileImages", allowedType: 
 
 })
 
-router.post("/verify", async (req, res) => {
-    console.log("req.body", req.body);
+router.post("/verify", validation(verifySchema), async (req, res) => {
 
     let data = await verifyEmail(req.body)
     return SuccessResponse({ res, message: 'email verified', status: 200, data })

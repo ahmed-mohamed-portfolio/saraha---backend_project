@@ -97,6 +97,25 @@ export const signinSchema = Joi.object().keys({
 
 
 
+export const verifySchema = Joi.object().keys({
+
+    email: Joi.string().email().required().messages({
+        "string.base": "Email must be a string",
+        "string.email": "Invalid email format",
+        "string.empty": "Email cannot be empty",
+        "any.required": "Email is required"
+    }),
+
+    code: Joi.string().length(4)
+        .required()
+        .messages({
+            "string.base": "Verification code must be a string",
+            "string.empty": "Verification code cannot be empty",
+            "string.length": "Verification code must be exactly 4 characters",
+            "any.required": "Verification code is required"
+        })
+
+})
 
 
 

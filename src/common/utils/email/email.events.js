@@ -4,6 +4,7 @@ import { set } from '../../../common/services/index.js'
 import { sendEmail } from "./sendEmail.js"
 import { BadRequestException } from "../responce/error.responce.js"
 import { generateHash } from "../../hash/hash.js"
+import { verifyEmailTemplate } from "./verifyEmailTemplate.js"
 
 export let event = new EventEmitter()
 
@@ -25,8 +26,7 @@ event.on("verifyEmail", async (data) => {
         await sendEmail({
             to: email,
             subject: "verify your email",
-            html: `<h1>verify your email</h1>
-        <p>${code}</p>`
+            html: verifyEmailTemplate(code)
         })
 
     } catch (error) {
