@@ -7,8 +7,8 @@ import jwt from 'jsonwebtoken'
 import { base_url, gmail_client_id, jwt_admin_signature, jwt_user_signature } from '../../../config/index.js'
 import { decodeRefreshToken, generateToken } from '../../common/security/security.js'
 import { OAuth2Client } from 'google-auth-library';
-
-
+import crypto from "node:crypto"
+import { deleteByPattern, deleteKey, keys, set } from "../../common/services/index.js"
 
 export const signup = async (data, file) => {
 
@@ -154,10 +154,12 @@ export const generateAccessToken = async (token) => {
             break;
     }
 
+    let jwtid = crypto.randomBytes(10).toString("hex")
 
     let accessToken = jwt.sign({ id: decodedData.id, firstName: decodedData.firstName, lastName: decodedData.lastName, email: decodedData.email }, signature, {
         expiresIn: '1m',
-        audience: decodedData.aud
+        audience: decodedData.aud,
+        jwtid
     })
 
 
@@ -198,6 +200,8 @@ export const logOutFromAllDevices = async (userId) => {
 
     let user = await findByIdAndUpdate({ model: userModel, id: userId, data: { credentialsUpdatedAt: new Date() }, select: '_id' })
 
+    //THIS IS A saver way =>  // await deleteByPattern(`RevokeToken::${userId}::`)
+    await deleteKey(await keys(`RevokeToken::${userId}::`))
 
     if (!user) {
         return NotFoundException({ message: "user not found" })
@@ -211,7 +215,28 @@ export const logOutFromAllDevices = async (userId) => {
 
 
 
+export const logOut = async (userId, jti) => {
 
+
+
+
+    let addToken = await set({
+        key: `RevokeToken::${userId}::${jti}`,
+        value: jti,
+        ttl: 31536000
+    })
+
+
+    if (!addToken) {
+        return BadRequestException({ message: "cant add token" })
+    }
+
+
+
+
+    return addToken
+
+}
 
 
 

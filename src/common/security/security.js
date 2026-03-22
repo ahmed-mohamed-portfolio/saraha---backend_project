@@ -3,7 +3,7 @@ import jwt from 'jsonwebtoken'
 import { userModel } from "../../database/index.js"
 import { findById } from "../../database/database.service.js"
 import { BadRequestException } from "../utils/responce/error.responce.js"
-
+import crypto from 'node:crypto'
 
 
 export const generateToken = (existUser, issuer) => {
@@ -26,18 +26,24 @@ export const generateToken = (existUser, issuer) => {
             break;
     }
 
+
+    let jwtid = crypto.randomBytes(10).toString("hex")
+
+
     //!i put it for test 1m
     let accessToken = jwt.sign({ id: existUser._id, firstName: existUser.firstName, lastName: existUser.lastName, email: existUser.email }, signature, {
         expiresIn: '1m',
         issuer,
-        audience
+        audience,
+        jwtid
     })
 
 
 
     let refreshToken = jwt.sign({ id: existUser._id, firstName: existUser.firstName, lastName: existUser.lastName, email: existUser.email }, refreshSignature, {
         expiresIn: '1y',
-        audience
+        audience,
+        jwtid
     })
 
     return { accessToken, refreshToken }
@@ -95,6 +101,12 @@ export const decodeRefreshToken = async (token) => {
 
     if (new Date(user.credentialsUpdatedAt).getTime() > decodedData.iat * 1000) {
         return BadRequestException({ message: 'invalid token' })
+    }
+
+
+    let blocked_Token = await get(`RevokeToken::${decodedData.id}::${decodedData.jti}`)
+    if (blocked_Token !== null) {
+        return BadRequestException({ message: 'invalid token (blocked)' })
     }
 
 

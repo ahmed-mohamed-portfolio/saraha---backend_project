@@ -2,6 +2,7 @@ import { decodeToken } from '../security/security.js'
 import { BadRequestException, UnauthorizedException } from '../utils/responce/error.responce.js'
 import { findById } from '../../database/database.service.js'
 import { userModel } from '../../database/index.js'
+import { get } from '../services/redis.service.js'
 
 export const authentication = async (req, res, next) => {
 
@@ -38,6 +39,12 @@ export const authentication = async (req, res, next) => {
 
 
             req.userId = decodedData.id
+            req.jti = decodedData.jti
+
+            let blocked_Token = await get(`RevokeToken::${req.userId}::${req.jti}`)
+            if (blocked_Token !== null) {
+                return BadRequestException({ message: 'invalid token (blocked)' })
+            }
 
             break;
 

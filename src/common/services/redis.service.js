@@ -93,3 +93,24 @@ export const deleteKey = async (key) => {
         console.log(`Fail in redis del operation ${error}`);
     }
 };
+
+
+
+
+export const deleteByPattern = async (pattern) => {
+    const stream = redisClient.scanStream({
+        match: `${pattern}*`,
+        count: 100
+    })
+
+    await new Promise((resolve, reject) => {
+        stream.on('data', async (keys) => {
+            if (keys.length) {
+                await redisClient.del(...keys)
+            }
+        })
+
+        stream.on('end', resolve)
+        stream.on('error', reject)
+    })
+}

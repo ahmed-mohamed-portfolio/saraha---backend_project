@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { SuccessResponse } from "../../common/utils/responce/index.js";
-import { signup, login, getUserById, generateAccessToken, signupWithGmail, sharedUser, logOutFromAllDevices } from './auth.service.js'
+import { signup, login, getUserById, generateAccessToken, signupWithGmail, sharedUser, logOutFromAllDevices, logOut } from './auth.service.js'
 import { authentication } from "../../common/middleWare/auth.js";
 import { signinSchema, signupSchema } from "./auth.validation.js";
 import { validation } from "../../common/utils/validation.js";
@@ -72,6 +72,14 @@ router.patch("/logout-from-all-devices", authentication, async (req, res) => {
 })
 
 
+router.post("/logout", authentication, async (req, res) => {
+
+
+    await logOut(req.userId, req.jti)
+    return SuccessResponse({ res, message: 'logged out successfully', status: 200 })
+
+
+})
 
 
 export default router
