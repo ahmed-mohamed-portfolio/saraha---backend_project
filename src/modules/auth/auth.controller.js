@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { SuccessResponse } from "../../common/utils/responce/index.js";
-import { signup, login, getUserById, generateAccessToken, signupWithGmail, sharedUser, logOutFromAllDevices, logOut, verifyEmail } from './auth.service.js'
+import { signup, login, getUserById, generateAccessToken, signupWithGmail, sharedUser, logOutFromAllDevices, logOut, verifyEmail, sendEmail } from './auth.service.js'
 import { authentication } from "../../common/middleWare/auth.js";
 import { signinSchema, signupSchema, verifySchema } from "./auth.validation.js";
 import { validation } from "../../common/utils/validation.js";
@@ -84,5 +84,11 @@ router.post("/logout", authentication, async (req, res) => {
 
 })
 
+router.post('/sendVerificationEmail', async (req, res) => {
+
+    await sendEmail(req.body)
+    return SuccessResponse({ res, message: 'email sent', status: 200 })
+
+})
 
 export default router

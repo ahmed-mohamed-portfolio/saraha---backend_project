@@ -262,3 +262,12 @@ export const verifyEmail = async (data) => {
 
     return BadRequestException({ message: "code not right" })
 }
+
+export const sendEmail = async (data) => {
+
+    let { userId, email } = data
+
+    //? send gmail verify code
+    event.emit("verifyEmail", { userId, email })
+
+}
