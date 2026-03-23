@@ -1,7 +1,7 @@
 import { compareHash, generateHash } from '../../common/hash/hash.js'
 import { ProviderEnums } from '../../common/index.js'
 import { BadRequestException, ConflictException, NotFoundException } from '../../common/utils/responce/index.js'
-import { findById, findByIdAndUpdate, findOne, insertOne } from '../../database/database.service.js'
+import { findById, findByIdAndUpdate, findOne, findOneAndUpdate, insertOne } from '../../database/database.service.js'
 import { userModel } from '../../database/index.js'
 import jwt from 'jsonwebtoken'
 import { base_url, gmail_client_id, jwt_admin_signature, jwt_user_signature } from '../../../config/index.js'
@@ -239,6 +239,7 @@ export const logOut = async (userId, jti) => {
 }
 
 export const verifyEmail = async (data) => {
+
     let { email, code } = data
 
 
@@ -267,7 +268,51 @@ export const sendEmail = async (data) => {
 
     let { userId, email } = data
 
-    //? send gmail verify code
     event.emit("verifyEmail", { userId, email })
 
+}
+
+export const forgetPassword = async (data) => {
+
+    let { email } = data
+
+    let userExist = await findOne({ model: userModel, filter: { email }, select: '_id' })
+    if (!userExist) {
+        return BadRequestException({ message: "email not found" })
+    }
+
+    let userId = userExist._id
+    event.emit("verifyEmail", { userId, email })
+
+    return userExist
+
+}
+
+export const verifyCode = async (data) => {
+
+    let { userId, code } = data
+
+    let redisCode = await get(`OTP::${userId}`)
+
+    if (!await compareHash(code.resetCode, redisCode)) {
+        return BadRequestException({ message: "not valid otp" })
+
+    }
+
+}
+
+export const editUserPassword = async (data) => {
+    let { newPassword, userId } = data
+
+    let hashPassword = await generateHash(newPassword.newPassword)
+
+    let updateUser = await findOneAndUpdate({ model: userModel, filter: { _id: userId }, data: { password: hashPassword }, options: { new: true }, select: "-password" })
+
+    if (updateUser) {
+
+        await deleteKey(`OTP::${userId}`)
+        return updateUser
+    } else {
+        return BadRequestException({ message: "something went wrong" })
+    }
 }

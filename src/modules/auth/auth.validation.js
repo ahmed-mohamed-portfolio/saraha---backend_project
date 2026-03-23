@@ -120,3 +120,25 @@ export const verifySchema = Joi.object().keys({
 
 
 
+
+
+export const newPasswordSchema = Joi.object().keys({
+    userId: Joi.string().required(),
+    newPassword: Joi.object({
+
+        newPassword: Joi.string()
+            .pattern(/^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$ %^&*-]).{8,}$/)
+            .required()
+            .messages({
+                "string.base": "Password must be a string",
+                "string.empty": "Password cannot be empty",
+                "string.pattern.base":
+                    "Password must contain at least 8 characters including uppercase, lowercase, number, and special character",
+                "any.required": "Password is required"
+            })
+
+    })
+
+
+})
+

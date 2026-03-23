@@ -1,14 +1,13 @@
 import { Router } from "express";
 import { SuccessResponse } from "../../common/utils/responce/index.js";
-import { signup, login, getUserById, generateAccessToken, signupWithGmail, sharedUser, logOutFromAllDevices, logOut, verifyEmail, sendEmail } from './auth.service.js'
+import { signup, login, getUserById, generateAccessToken, signupWithGmail, sharedUser, logOutFromAllDevices, logOut, verifyEmail, sendEmail, forgetPassword, verifyCode, editUserPassword } from './auth.service.js'
 import { authentication } from "../../common/middleWare/auth.js";
-import { signinSchema, signupSchema, verifySchema } from "./auth.validation.js";
+import { newPasswordSchema, signinSchema, signupSchema, verifySchema } from "./auth.validation.js";
 import { validation } from "../../common/utils/validation.js";
 import { extensions, multer_local } from "../../common/middleWare/multer.js"
 
 
 const router = Router()
-
 
 
 router.post('/signup', multer_local({ customPath: "profileImages", allowedType: extensions.image }).single("image"), validation(signupSchema), async (req, res) => {
@@ -88,6 +87,30 @@ router.post('/sendVerificationEmail', async (req, res) => {
 
     await sendEmail(req.body)
     return SuccessResponse({ res, message: 'email sent', status: 200 })
+
+})
+
+router.post("/forget-password", async (req, res) => {
+
+    let data = await forgetPassword(req.body)
+
+    return SuccessResponse({ res, message: 'email sent', status: 200, data })
+
+})
+
+router.post("/verify-code", async (req, res) => {
+
+    await verifyCode(req.body)
+
+    return SuccessResponse({ res, message: 'valid otp', status: 200 })
+
+})
+
+router.put("/edit-user-password", validation(newPasswordSchema), async (req, res) => {
+
+    let data = await editUserPassword(req.body)
+
+    return SuccessResponse({ res, message: 'password changed', status: 200, data })
 
 })
 
