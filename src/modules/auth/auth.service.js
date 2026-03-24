@@ -242,8 +242,7 @@ export const verifyEmail = async (data) => {
 
     let { email, code } = data
 
-
-    let user = await findOne({ model: userModel, filer: { email } })
+    let user = await findOne({ model: userModel, filter: { email } })
 
     if (!user) {
         return NotFoundException({ message: "email not found" })
