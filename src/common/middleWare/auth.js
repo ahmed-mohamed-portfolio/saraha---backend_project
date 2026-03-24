@@ -31,11 +31,9 @@ export const authentication = async (req, res, next) => {
 
             let user = await findById({ model: userModel, id: decodedData.id })
 
-            if (new Date(user.credentialsUpdatedAt).getTime() > decodedData.iat * 1000) {
-                return BadRequestException({ message: 'invalid token' })
+            if (Math.floor(new Date(user.credentialsUpdatedAt).getTime() / 1000) > decodedData.iat) {
+                return BadRequestException({ message: 'invalid token22' })
             }
-
-
 
 
             req.userId = decodedData.id
