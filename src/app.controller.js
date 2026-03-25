@@ -30,7 +30,7 @@ export const bootstrap = async () => {
     app.use(globalErrorHandler)
 
     app.listen(PORT, () => {
-        console.log(`server is running on port ${PORT} hello`);
+        console.log(`server is running on port ${PORT}`);
     })
 
 }
