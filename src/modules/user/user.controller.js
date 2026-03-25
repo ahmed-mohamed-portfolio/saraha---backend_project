@@ -5,7 +5,7 @@ import { deleteProfile, updateProfile } from "./user.service.js";
 import { SuccessResponse } from "../../common/utils/responce/success.responce.js";
 import { validation } from "../../common/utils/validation.js";
 import { updateSchema } from "./user.validation.js";
-const router = Router()
+const router = Router({ caseSensitive: true, strict: true })
 
 
 

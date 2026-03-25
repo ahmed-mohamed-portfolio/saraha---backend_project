@@ -7,7 +7,7 @@ import { validation } from "../../common/utils/validation.js";
 import { extensions, multer_local } from "../../common/middleWare/multer.js"
 
 
-const router = Router()
+const router = Router({ caseSensitive: true, strict: true })
 
 
 router.post('/signup', multer_local({ customPath: "profileImages", allowedType: extensions.image }).single("image"), validation(signupSchema), async (req, res) => {
