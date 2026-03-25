@@ -13,13 +13,7 @@ export const bootstrap = async () => {
 
     const app = express()
     app.use(express.json())
-    app.use(cors({
-        origin: [
-            "http://localhost:4200",
-            "https://lucky-faloodeh-711088.netlify.app"
-        ],
-        credentials: true
-    }));
+    app.use(cors())
 
     app.use(express.urlencoded({ extended: true }));
     app.use('/upload', express.static("upload"))
