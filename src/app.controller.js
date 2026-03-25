@@ -17,7 +17,7 @@ export const bootstrap = async () => {
     app.use(cors({
         origin: [
             "http://localhost:4200",
-            "https://saraha-app-proj.netlify.app"
+            "https://saraha-app.netlify.app"
         ],
 
         allowedHeaders: ["Content-Type", "Authorization", "ngrok-skip-browser-warning"]
