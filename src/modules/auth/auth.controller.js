@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { SuccessResponse } from "../../common/utils/responce/index.js";
+import { ConflictException, SuccessResponse } from "../../common/utils/responce/index.js";
 import { signup, login, getUserById, generateAccessToken, signupWithGmail, sharedUser, logOutFromAllDevices, logOut, verifyEmail, sendEmail, forgetPassword, verifyCode, editUserPassword } from './auth.service.js'
 import { authentication } from "../../common/middleWare/auth.js";
 import { newPasswordSchema, signinSchema, signupSchema, verifySchema } from "./auth.validation.js";
@@ -26,13 +26,58 @@ router.post("/verify", validation(verifySchema), async (req, res) => {
 
 })
 
+
+const getCookieValue = (req, key) => {
+    const cookies = req.headers.cookie;
+    if (!cookies) {
+        return null;
+    }
+
+
+    for (const cookie of cookies.split(";")) {
+        const [cookieKey, ...cookieValueParts] = cookie.trim().split("=");
+        if (cookieKey === key) {
+            return decodeURIComponent(cookieValueParts.join("="));
+        }
+    }
+
+
+    return null;
+};
+
+
 router.post('/signup/gmail', async (req, res) => {
 
     //? i used this email ==> ahmed.mohamed.connect@gmail.com
+
+    const csrfCookie = getCookieValue(req, "g_csrf_token");
+    const csrfBody = req.body?.g_csrf_token;
+    if (!csrfCookie || !csrfBody || csrfCookie !== csrfBody) {
+        return ConflictException({ message: "Invalid Google CSRF token" });
+    }
+
+
     let host = `${req.protocol}://${req.host}`;
 
-    let { message, status, data } = await signupWithGmail(req.body.idToken, host)
-    return SuccessResponse({ res, message, status, data })
+
+    let { message, status, data } = await signupWithGmail(req.body.credential, host)
+
+    //if success
+    res.cookie('accessToken', data.accessToken, {
+        path: '/',
+        sameSite: 'lax',
+        secure: false,
+        httpOnly: false,
+    });
+
+    res.cookie('refreshToken', data.refreshToken, {
+        path: '/',
+        sameSite: 'lax',
+        secure: false,
+        httpOnly: false,
+    });
+
+    return res.redirect('http://localhost:4200/messages');
 
 })
 
