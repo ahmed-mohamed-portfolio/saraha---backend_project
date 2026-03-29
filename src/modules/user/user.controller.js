@@ -22,6 +22,14 @@ router.put('/update-user', multer_local({ customPath: "profileImages", allowedTy
 router.delete('/delete-profile', authentication, async (req, res) => {
 
     let data = await deleteProfile(req.userId)
+
+    res.clearCookie("refreshToken", {
+        httpOnly: true,
+        secure: false,
+        sameSite: "lax",
+        path: "/"
+    });
+
     SuccessResponse({ res, message: "user deleted", status: 200, data })
 })
 

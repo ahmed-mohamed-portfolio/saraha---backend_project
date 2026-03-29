@@ -146,8 +146,10 @@ export const login = async (data, issuer) => {
 }
 
 export const generateAccessToken = async (token) => {
+    // console.log("tokentokentoken", token);
 
     let decodedData = await decodeRefreshToken(token)
+    // console.log("decodedDatadecodedDatadecodedData", decodedData);
 
     let signature = undefined
 
@@ -170,6 +172,7 @@ export const generateAccessToken = async (token) => {
     })
 
 
+    // console.log("accessTokenaccessTokenaccessToken", accessToken);
 
     return accessToken
 

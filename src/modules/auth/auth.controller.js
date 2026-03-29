@@ -82,14 +82,36 @@ router.post('/signup/gmail', async (req, res) => {
 })
 
 router.post('/login', validation(signinSchema), async (req, res) => {
+
+
     let host = `${req.protocol}://${req.host}`;
 
     let loginUser = await login(req.body, host)
+
+
+    res.cookie("refreshToken", loginUser.refreshToken, {
+        httpOnly: true,
+        secure: false,
+        maxAge: 1000 * 60 * 500,
+        sameSite: "lax",
+        path: "/"
+    })
+
+
+    res.cookie("accessToken", loginUser.accessToken, {
+        httpOnly: false,
+        secure: false,
+        maxAge: 1000 * 60 * 500,
+        sameSite: "lax",
+        path: "/"
+    })
+
     return SuccessResponse({ res, message: 'user login successfully', status: 200, data: loginUser })
 
 })
 
 router.get('/get-user-by-id', authentication, async (req, res) => {
+    // console.log("req.userId", req.userId);
 
     let userData = await getUserById(req.userId)
     return SuccessResponse({ res, message: 'user data got successfully', status: 200, data: userData })
@@ -98,11 +120,17 @@ router.get('/get-user-by-id', authentication, async (req, res) => {
 
 router.get('/generate-access-token', async (req, res) => {
 
-    let { authorization } = req.headers
 
+    let accessToken = await generateAccessToken(req.cookies.refreshToken)
 
-    let accessToken = await generateAccessToken(authorization)
-    return SuccessResponse({ res, message: 'access token created', status: 200, data: accessToken })
+    res.cookie("accessToken", accessToken, {
+        httpOnly: false,
+        secure: false,
+        maxAge: 1000 * 60 * 500,
+        sameSite: "lax",
+        path: "/"
+    })
+    return SuccessResponse({ res, message: 'access token created', status: 200, })
 
 })
 
@@ -117,6 +145,15 @@ router.get("/shared-user/:profileName", async (req, res) => {
 router.patch("/logout-from-all-devices", authentication, async (req, res) => {
 
     await logOutFromAllDevices(req.userId)
+
+    res.clearCookie("refreshToken", {
+        httpOnly: true,
+        secure: false,
+        sameSite: "lax",
+        path: "/"
+    });
+
+
     return SuccessResponse({ res, message: 'logged out from all devices successfully', status: 200 })
 
 })
@@ -124,6 +161,13 @@ router.patch("/logout-from-all-devices", authentication, async (req, res) => {
 router.post("/logout", authentication, async (req, res) => {
 
     await logOut(req.userId, req.jti)
+
+    res.clearCookie("refreshToken", {
+        httpOnly: true,
+        secure: false,
+        sameSite: "lax",
+        path: "/"
+    });
     return SuccessResponse({ res, message: 'logged out successfully', status: 200 })
 
 })
