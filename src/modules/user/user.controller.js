@@ -25,8 +25,8 @@ router.delete('/delete-profile', authentication, async (req, res) => {
 
     res.clearCookie("refreshToken", {
         httpOnly: true,
-        secure: false,
-        sameSite: "lax",
+        sameSite: 'none',
+        secure: true,
         path: "/"
     });
 

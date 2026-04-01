@@ -65,15 +65,15 @@ router.post('/signup/gmail', async (req, res) => {
     //if success
     res.cookie('accessToken', data.accessToken, {
         path: '/',
-        sameSite: 'lax',
-        secure: false,
+        sameSite: 'none',
+        secure: true,
         httpOnly: false,
     });
 
     res.cookie('refreshToken', data.refreshToken, {
         path: '/',
-        sameSite: 'lax',
-        secure: false,
+        sameSite: 'none',
+        secure: true,
         httpOnly: false,
     });
 
@@ -91,18 +91,18 @@ router.post('/login', validation(signinSchema), async (req, res) => {
 
     res.cookie("refreshToken", loginUser.refreshToken, {
         httpOnly: true,
-        secure: false,
         maxAge: 1000 * 60 * 500,
-        sameSite: "lax",
+        sameSite: 'none',
+        secure: true,
         path: "/"
     })
 
 
     res.cookie("accessToken", loginUser.accessToken, {
         httpOnly: false,
-        secure: false,
         maxAge: 1000 * 60 * 500,
-        sameSite: "lax",
+        sameSite: 'none',
+        secure: true,
         path: "/"
     })
 
@@ -125,10 +125,9 @@ router.get('/generate-access-token', async (req, res) => {
 
     res.cookie("accessToken", accessToken, {
         httpOnly: false,
-        secure: false,
         maxAge: 1000 * 60 * 500,
-        sameSite: "lax",
-        path: "/"
+        sameSite: 'none',
+        secure: true, path: "/"
     })
     return SuccessResponse({ res, message: 'access token created', status: 200, })
 
@@ -148,8 +147,8 @@ router.patch("/logout-from-all-devices", authentication, async (req, res) => {
 
     res.clearCookie("refreshToken", {
         httpOnly: true,
-        secure: false,
-        sameSite: "lax",
+        sameSite: 'none',
+        secure: true,
         path: "/"
     });
 
@@ -164,8 +163,8 @@ router.post("/logout", authentication, async (req, res) => {
 
     res.clearCookie("refreshToken", {
         httpOnly: true,
-        secure: false,
-        sameSite: "lax",
+        sameSite: 'none',
+        secure: true,
         path: "/"
     });
     return SuccessResponse({ res, message: 'logged out successfully', status: 200 })
