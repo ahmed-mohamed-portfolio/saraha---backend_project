@@ -7,6 +7,7 @@ import { get } from '../services/redis.service.js'
 export const authentication = async (req, res, next) => {
 
     let { authorization } = req.headers
+    console.log("authorization", authorization);
 
     if (!authorization) {
         UnauthorizedException({ message: "un authorized" })
