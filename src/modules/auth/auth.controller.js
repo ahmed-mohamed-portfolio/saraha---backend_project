@@ -145,6 +145,15 @@ router.patch("/logout-from-all-devices", authentication, async (req, res) => {
 
     await logOutFromAllDevices(req.userId)
 
+
+    res.clearCookie("accessToken", {
+        httpOnly: true,
+        sameSite: 'none',
+        secure: true,
+        path: "/"
+    });
+
+
     res.clearCookie("refreshToken", {
         httpOnly: true,
         sameSite: 'none',
@@ -160,6 +169,14 @@ router.patch("/logout-from-all-devices", authentication, async (req, res) => {
 router.post("/logout", authentication, async (req, res) => {
 
     await logOut(req.userId, req.jti)
+
+
+    res.clearCookie("accessToken", {
+        httpOnly: true,
+        sameSite: 'none',
+        secure: true,
+        path: "/"
+    });
 
     res.clearCookie("refreshToken", {
         httpOnly: true,

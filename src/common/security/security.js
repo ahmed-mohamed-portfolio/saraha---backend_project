@@ -100,7 +100,7 @@ export const decodeRefreshToken = async (token) => {
 
     let blocked_Token = await get(`RevokeToken::${decodedData.id}::${decodedData.jti}`)
     if (blocked_Token !== null) {
-        return BadRequestException({ message: 'invalid token (blocked)' })
+        return BadRequestException({ message: 'invalid token (blocked 2)' })
     }
 
 

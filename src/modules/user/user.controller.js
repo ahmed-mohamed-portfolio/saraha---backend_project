@@ -23,6 +23,14 @@ router.delete('/delete-profile', authentication, async (req, res) => {
 
     let data = await deleteProfile(req.userId)
 
+
+    res.clearCookie("accessToken", {
+        httpOnly: true,
+        sameSite: 'none',
+        secure: true,
+        path: "/"
+    });
+
     res.clearCookie("refreshToken", {
         httpOnly: true,
         sameSite: 'none',
