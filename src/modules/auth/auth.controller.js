@@ -81,7 +81,7 @@ router.post('/signup/gmail', async (req, res) => {
         httpOnly: false,
     });
 
-    return res.redirect('http://localhost:4200/messages');
+    return res.redirect('https://saraha-app.netlify.app/messages');
 
 })
 
