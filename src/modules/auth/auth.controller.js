@@ -50,11 +50,15 @@ router.post('/signup/gmail', async (req, res) => {
 
     //? i used this email ==> ahmed.mohamed.connect@gmail.com
 
-    const csrfCookie = getCookieValue(req, "g_csrf_token");
-    const csrfBody = req.body?.g_csrf_token;
-    if (!csrfCookie || !csrfBody || csrfCookie !== csrfBody) {
-        return ConflictException({ message: "Invalid Google CSRF token" });
-    }
+
+    //this dont work till front and back in same domain or local host
+
+    // const csrfCookie = getCookieValue(req, "g_csrf_token");
+    // const csrfBody = req.body?.g_csrf_token;
+    // if (!csrfCookie || !csrfBody || csrfCookie !== csrfBody) {
+    //     return ConflictException({ message: "Invalid Google CSRF token" });
+    // }
+
 
 
     let host = `${req.protocol}://${req.host}`;
